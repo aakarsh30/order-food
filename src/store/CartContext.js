@@ -1,62 +1,56 @@
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 import React, { Children, createContext, useReducer } from "react";
 
-const CartContext = createContext({
-  items: [],
-  addItem: (item) => {},
-  removeItem: (id) => {},
+const cartSlice = createSlice({
+  name: "cart",
+  initialState: { items: [] },
+  reducers: {
+    addItem(state, action) {
+      const repeatItem = state.items.findIndex(
+        (item) => item.id === action.payload.id
+      );
+      if (repeatItem > -1) {
+        const item = state.items[repeatItem];
+        item.quantity = item.quantity + 1;
+      } else {
+        state.items.push({ ...action.payload, quantity: 1 });
+      }
+    },
+    removeItem(state, action) {
+      const index = state.items.findIndex((item) => item.id === action.payload);
+      const item = state.items[index];
+      if (item.quantity > 1) {
+        item.quantity = item.quantity - 1;
+      } else {
+        state.items.splice(index, 1);
+      }
+    },
+  },
 });
 
-function cartReducer(state, action) {
-  if (action.type === "ADD") {
-    const repeatItem = state.items.findIndex(
-      (item) => item.id === action.item.id
-    );
-    const updatedItems = [...state.items];
-    if (repeatItem > -1) {
-      const item = state.items[repeatItem];
-      const updateItem = {
-        ...item,
-        quantity: item.quantity + 1,
-      };
-      updatedItems[repeatItem] = updateItem;
-    } else {
-      updatedItems.push({ ...action.item, quantity: 1 });
-    }
-    return { ...state, items: updatedItems };
-  }
-  if (action.type === "DEL") {
-    const index = state.items.findIndex((item) => item.id === action.id);
-    const item = state.items[index];
-    const updatedItems = [...state.items];
-    if (item.quantity > 1) {
-      const updateItem = {
-        ...item,
-        quantity: item.quantity - 1,
-      };
-      updatedItems[index] = updateItem;
-    } else {
-      updatedItems.splice(index, 1);
-    }
-    return { ...state, items: updatedItems };
-  }
-}
+const progressSlice = createSlice({
+  name: "progress",
+  initialState: { progress: "" },
+  reducers: {
+    showCart(state) {
+      state.progress = "cart";
+    },
+    hideCart(state) {
+      state.progress = "";
+    },
+    showCheckout(state) {
+      state.progress = "checkout";
+    },
+    hideCheckout(state) {
+      state.progress = "";
+    },
+  },
+});
 
-export function CartContextProvider({ children }) {
-  const [cart, dispatchAction] = useReducer(cartReducer, { items: [] });
-  function addItem(item) {
-    dispatchAction({ type: "ADD", item });
-  }
-  function removeItem(id) {
-    dispatchAction({ type: "DEL", id });
-  }
-  const cartContext = {
-    items: cart.items,
-    addItem,
-    removeItem,
-  };
-  return (
-    <CartContext.Provider value={cartContext}>{children}</CartContext.Provider>
-  );
-}
+const store = configureStore({
+  reducer: { cart: cartSlice.reducer, progress: progressSlice.reducer },
+});
 
-export default CartContext;
+export const cartActions = cartSlice.actions;
+export const progressActions = progressSlice.actions;
+export default store;

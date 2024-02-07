@@ -1,36 +1,40 @@
 import React, { useContext, useState } from "react";
 import Modal from "./Modal.js";
-import CartContext from "../store/CartContext.js";
+import CartContext, {
+  cartActions,
+  progressActions,
+} from "../store/CartContext.js";
 import Button from "./Button.js";
-import ProgressContext from "../store/ProgressContext.js";
 import { curFormat } from "../util/formatter.js";
 import CartItem from "./CartItem.js";
+import { useDispatch, useSelector } from "react-redux";
 function Cart() {
-  const ctx = useContext(CartContext);
-  const progressctx = useContext(ProgressContext);
-  const total = ctx.items.reduce(
+  const items = useSelector((state) => state.cart.items);
+  const dispatch = useDispatch();
+  const progress = useSelector((state) => state.progress.progress);
+  const total = items.reduce(
     (totalprice, item) => totalprice + item.price * item.quantity,
     0
   );
-  console.log(progressctx.progress);
+  console.log(progress);
   return (
     <Modal
       className="cart"
-      open={progressctx.progress === "cart"}
+      open={progress === "cart"}
       onClose={
-        progressctx.progress === "cart" ? () => progressctx.hideCart() : null
+        progress === "cart" ? () => dispatch(progressActions.hideCart()) : null
       }
     >
       <h2>Your Cart</h2>
       <ul>
-        {ctx.items.map((item) => (
+        {items.map((item) => (
           <CartItem
             key={item.id}
             name={item.name}
             price={item.price}
             quantity={item.quantity}
-            onDecrease={() => ctx.removeItem(item.id)}
-            onIncrease={() => ctx.addItem(item)}
+            onDecrease={() => dispatch(cartActions.removeItem(item.id))}
+            onIncrease={() => dispatch(cartActions.addItem(item))}
           />
         ))}
       </ul>
@@ -38,14 +42,16 @@ function Cart() {
       <p className="modal-actions">
         <Button
           onClick={() => {
-            progressctx.hideCart();
+            dispatch(progressActions.hideCart());
           }}
           textOnly
         >
           Close
         </Button>
-        {ctx.items.length > 0 && (
-          <Button onClick={() => progressctx.showCheckout()}>Checkout</Button>
+        {items.length > 0 && (
+          <Button onClick={() => dispatch(progressActions.showCheckout())}>
+            Checkout
+          </Button>
         )}
       </p>
     </Modal>

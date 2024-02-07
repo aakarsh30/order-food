@@ -1,13 +1,11 @@
 import React from "react";
 import { curFormat } from "../util/formatter.js";
 import Button from "./Button.js";
-import { useContext } from "react";
-import CartContext from "../store/CartContext.js";
+import { cartActions } from "../store/CartContext.js";
+import { useDispatch } from "react-redux";
 function MealItem({ item }) {
-  const ctx = useContext(CartContext);
-  function addItem() {
-    ctx.addItem(item);
-  }
+  const dispatch = useDispatch();
+
   return (
     <li className="meal-item">
       <article>
@@ -18,7 +16,9 @@ function MealItem({ item }) {
           <p className="meal-item-description">{item.description}</p>
         </div>
         <p className="meal-item-actions">
-          <Button onClick={addItem}>Add to cart</Button>
+          <Button onClick={() => dispatch(cartActions.addItem(item))}>
+            Add to cart
+          </Button>
         </p>
       </article>
     </li>

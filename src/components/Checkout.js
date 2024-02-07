@@ -1,21 +1,22 @@
 import React, { useContext, useState } from "react";
 import Modal from "./Modal.js";
 import { curFormat } from "../util/formatter.js";
-import CartContext from "../store/CartContext.js";
+import CartContext, { progressActions } from "../store/CartContext.js";
 import Input from "./Input.js";
 import Button from "./Button.js";
-import ProgressContext from "../store/ProgressContext.js";
+import { useDispatch, useSelector } from "react-redux";
 
 function Checkout() {
-  const ctx = useContext(CartContext);
-  const progressctx = useContext(ProgressContext);
-  const total = ctx.items.reduce(
+  const items = useSelector((state) => state.cart.items);
+  const progress = useSelector((state) => state.progress.progress);
+  const dispatch = useDispatch();
+  const total = items.reduce(
     (amnt, item) => amnt + item.price * item.quantity,
     0
   );
-  console.log(progressctx.progress);
+  console.log(progress);
   return (
-    <Modal open={progressctx.progress === "checkout"}>
+    <Modal open={progress === "checkout"}>
       <form>
         <h2>Checkout</h2>
         <p>Total Amount: {curFormat.format(total)}</p>
@@ -28,7 +29,7 @@ function Checkout() {
         </div>
         <p className="modal-actions">
           <Button
-            onClick={() => progressctx.hideCheckout()}
+            onClick={() => dispatch(progressActions.hideCheckout())}
             textOnly
             type="button"
           >
