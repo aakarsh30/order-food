@@ -3,6 +3,7 @@ import MealItem from "./MealItem.js";
 
 function Meals() {
   const [loadMeals, setloadMeals] = useState([]);
+  const [loader, setloader] = useState(true);
   useEffect(() => {
     async function fetchMeals() {
       const response = await fetch(
@@ -13,16 +14,20 @@ function Meals() {
       }
       const meals = await response.json();
       setloadMeals(meals);
+      setloader(false);
     }
     fetchMeals();
   }, []);
 
   return (
-    <ul id="meals">
-      {loadMeals.map((meal) => {
-        return <MealItem item={meal} key={meal.id} />;
-      })}
-    </ul>
+    <>
+      {loader && <div className="loader"></div>}
+      <ul id="meals">
+        {loadMeals.map((meal) => {
+          return <MealItem item={meal} key={meal.id} />;
+        })}
+      </ul>
+    </>
   );
 }
 
