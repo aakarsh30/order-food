@@ -9,7 +9,7 @@ function MealItem({ item }) {
   return (
     <li className="meal-item">
       <article>
-        <img src={`http://localhost:8080/${item.image}`} />
+        <img src={item.image} />
         <div>
           <h3>{item.name}</h3>
           <p className="meal-item-price">{curFormat.format(item.price)}</p>

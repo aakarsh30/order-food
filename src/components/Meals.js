@@ -5,7 +5,9 @@ function Meals() {
   const [loadMeals, setloadMeals] = useState([]);
   useEffect(() => {
     async function fetchMeals() {
-      const response = await fetch("http://localhost:8080/meals");
+      const response = await fetch(
+        "https://backend-hazel-kappa.vercel.app/meals"
+      );
       if (!response.ok) {
         console.log("Wrong");
       }
