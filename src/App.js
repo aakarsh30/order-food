@@ -1,5 +1,6 @@
-import Cart from "./components/Cart.js";
-import Checkout from "./components/Checkout.js";
+import { React, Suspense, lazy } from "react";
+const Cart = lazy(() => import("./components/Cart.js"));
+const Checkout = lazy(() => import("./components/Checkout.js"));
 import Header from "./components/Header.js";
 import Meals from "./components/Meals.js";
 import { Provider } from "react-redux";
@@ -10,8 +11,10 @@ function App() {
       <Provider store={store}>
         <Header />
         <Meals />
-        <Cart />
-        <Checkout />
+        <Suspense fallback={<div className="loader"></div>}>
+          <Cart />
+          <Checkout />
+        </Suspense>
       </Provider>
     </>
   );
