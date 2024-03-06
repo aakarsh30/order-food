@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useMemo } from "react";
 import Modal from "./Modal.js";
 import { curFormat } from "../util/formatter.js";
 import CartContext, { progressActions } from "../store/CartContext.js";
@@ -10,9 +10,9 @@ function Checkout() {
   const items = useSelector((state) => state.cart.items);
   const progress = useSelector((state) => state.progress.progress);
   const dispatch = useDispatch();
-  const total = items.reduce(
-    (amnt, item) => amnt + item.price * item.quantity,
-    0
+  const total = useMemo(
+    () => items.reduce((amnt, item) => amnt + item.price * item.quantity, 0),
+    [items]
   );
   console.log(progress);
   return (
