@@ -17,7 +17,7 @@ function Header() {
     <header id="main-header">
       <div id="title">
         <img src={LogoImg} />
-        <h1>Order Food</h1>
+        <h1>Order Food Fast</h1>
       </div>
       <nav>
         <Button onClick={openCartHandle} textOnly>
